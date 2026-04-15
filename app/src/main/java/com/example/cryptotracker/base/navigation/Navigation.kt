@@ -2,7 +2,7 @@ package com.example.cryptotracker.base.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Garage
-import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -26,7 +26,7 @@ fun BottomNavigationBar(backStack: NavBackStack<NavKey>) {
                 backStack.clear()
                 backStack.add(Screen.Home)
             },
-            icon = { Icon(imageVector = Icons.Default.Garage, contentDescription = "Home") },
+            icon = { Icon(imageVector = Icons.Default.Home, contentDescription = "Home") },
             label = { Text(text = "Home") }
         )
     }

@@ -9,6 +9,8 @@ class CryptoCurrencyMapper @Inject constructor() {
     fun mapDtoToUiModel(dto: CryptoCurrencyDto): CryptoCurrencyUi = CryptoCurrencyUi(
         symbol = dto.symbol,
         priceChange = dto.priceChange,
-        priceChangePercent = dto.priceChangePercent
+        priceChangePercent = dto.priceChangePercent,
+        bidPrice = dto.bidPrice,
+        askPrice = dto.askPrice
     )
 }
