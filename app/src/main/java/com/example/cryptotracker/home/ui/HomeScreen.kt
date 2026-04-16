@@ -22,10 +22,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cryptotracker.R
 import com.example.cryptotracker.base.ui.data.UiState
 import com.example.cryptotracker.base.ui.generalerror.GeneralError
+import com.example.cryptotracker.base.ui.theme.CryptoTrackerTheme
 import com.example.cryptotracker.home.data.CryptoCurrencyUi
 import com.example.cryptotracker.home.data.HomeIntent
 
@@ -130,5 +132,44 @@ private fun CryptoCurrencyList(
                 }
             )
         }
+    }
+}
+
+@Preview(
+    showBackground = true,
+    name = "Home Screen"
+)
+@Composable
+private fun HomeScreenPreview() {
+    CryptoTrackerTheme {
+        PullToRefreshContainer(
+            isRefreshing = false,
+            uiState = listOf(
+                CryptoCurrencyUi(
+                    symbol = "BTC",
+                    priceChange = "0.0",
+                    priceChangePercent = "0.0",
+                    weightedAvgPrice = "0.0",
+                    prevClosePrice = "0.0",
+                    lastPrice = "0.0",
+                    lastQty = "0.0",
+                    bidPrice = "0.0",
+                    bidQty = "0.0",
+                    askPrice = "0.0",
+                    askQty = "0.0",
+                    openPrice = "0.0",
+                    highPrice = "0.0",
+                    lowPrice = "0.0",
+                    volume = "0.0",
+                    quoteVolume = "0.0",
+                    openTime = 0L,
+                    closeTime = 123123123,
+                    firstId = 0L,
+                    lastId = 0L,
+                    count = 0
+                )
+            ),
+            onSubmitIntent = {}
+        )
     }
 }
