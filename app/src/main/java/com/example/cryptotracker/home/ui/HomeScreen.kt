@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
@@ -21,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.unit.dp
 import com.example.cryptotracker.R
 import com.example.cryptotracker.base.ui.data.UiState
 import com.example.cryptotracker.base.ui.generalerror.GeneralError
@@ -69,6 +71,7 @@ private fun PullToRefreshContainer(
     val pullToRefreshState = rememberPullToRefreshState()
 
     PullToRefreshBox(
+        modifier = Modifier.padding(horizontal = 8.dp),
         isRefreshing = isRefreshing,
         onRefresh = { onSubmitIntent(HomeIntent.Refresh) },
         state = pullToRefreshState
@@ -83,6 +86,21 @@ private fun CryptoCurrencyList(
     onSubmitIntent: (HomeIntent) -> Unit
 ) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
+        stickyHeader {
+            ListItem(
+                shadowElevation = 2.dp,
+                headlineContent = {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(text = stringResource(id = R.string.home_screen_sticky_header_symbol_text))
+                        Text(text = stringResource(id = R.string.home_screen_sticky_header_percent_change_text))
+                    }
+                }
+            )
+        }
+
         items(
             items = uiState,
             key = { cryptoCurrency -> cryptoCurrency.symbol }) { cryptoCurrency ->
@@ -91,6 +109,7 @@ private fun CryptoCurrencyList(
                     role = Role.Button,
                     onClick = { onSubmitIntent(HomeIntent.CryptoCurrencySelected(cryptoCurrency = cryptoCurrency)) }
                 ),
+                shadowElevation = 2.dp,
                 headlineContent = {
                     Row(
                         modifier = Modifier.fillMaxWidth(),

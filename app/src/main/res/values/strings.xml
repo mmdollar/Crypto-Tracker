@@ -8,4 +8,28 @@
     <string name="bottom_bar_home_button_text">Home</string>
 
     <string name="home_screen_bid_ask_text">Bid/Ask:</string>
+    <string name="home_screen_sticky_header_symbol_text">Symbol</string>
+    <string name="home_screen_sticky_header_percent_change_text">Percent Change</string>
+
+    <string name="details_screen_symbol_text">Symbol</string>
+    <string name="details_screen_price_change_text">Price change</string>
+    <string name="details_screen_price_change_percent_text">Price change percent</string>
+    <string name="details_screen_weighted_avg_price_text">Weighted avg price</string>
+    <string name="details_screen_prev_close_price_text">Prev close price</string>
+    <string name="details_screen_last_price_text">Last price</string>
+    <string name="details_screen_last_qty_text">Last qty</string>
+    <string name="details_screen_bid_price_text">Bid price</string>
+    <string name="details_screen_bid_qty_text">Bid qty</string>
+    <string name="details_screen_ask_price_text">Ask price</string>
+    <string name="details_screen_ask_qty_text">Ask qty</string>
+    <string name="details_screen_open_price_text">Open price</string>
+    <string name="details_screen_high_price_text">High price</string>
+    <string name="details_screen_low_price_text">Low price</string>
+    <string name="details_screen_volume_text">Volume</string>
+    <string name="details_screen_quote_volume_text">Quote volume</string>
+    <string name="details_screen_open_time_text">Open time</string>
+    <string name="details_screen_close_time_text">Close time</string>
+    <string name="details_screen_first_id_text">First Id</string>
+    <string name="details_screen_last_id_text">Last Id</string>
+    <string name="details_screen_count_text">Count</string>
 </resources>

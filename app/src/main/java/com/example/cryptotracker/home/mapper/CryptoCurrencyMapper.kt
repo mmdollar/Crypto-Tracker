@@ -10,7 +10,23 @@ class CryptoCurrencyMapper @Inject constructor() {
         symbol = dto.symbol,
         priceChange = dto.priceChange,
         priceChangePercent = dto.priceChangePercent,
+        weightedAvgPrice = dto.weightedAvgPrice,
+        prevClosePrice = dto.prevClosePrice,
+        lastPrice = dto.lastPrice,
+        lastQty = dto.lastQty,
         bidPrice = dto.bidPrice,
-        askPrice = dto.askPrice
+        bidQty = dto.bidQty,
+        askPrice = dto.askPrice,
+        askQty = dto.askQty,
+        openPrice = dto.openPrice,
+        highPrice = dto.highPrice,
+        lowPrice = dto.lowPrice,
+        volume = dto.volume,
+        quoteVolume = dto.quoteVolume,
+        openTime = dto.openTime,
+        closeTime = dto.closeTime,
+        firstId = dto.firstId,
+        lastId = dto.lastId,
+        count = dto.count
     )
 }
