@@ -7,12 +7,15 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.ui.NavDisplay
+import com.example.cryptotracker.R
 import com.example.cryptotracker.base.ui.generalerror.GeneralError
+import com.example.cryptotracker.details.ui.DetailsScreen
 import com.example.cryptotracker.home.ui.HomeScreen
 import com.example.cryptotracker.home.ui.HomeViewModel
 
@@ -25,8 +28,13 @@ fun BottomNavigationBar(backStack: NavBackStack<NavKey>) {
                 backStack.clear()
                 backStack.add(Screen.Home)
             },
-            icon = { Icon(imageVector = Icons.Default.Home, contentDescription = "Home") },
-            label = { Text(text = "Home") }
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Home,
+                    contentDescription = stringResource(id = R.string.bottom_bar_home_button_text)
+                )
+            },
+            label = { Text(text = stringResource(id = R.string.bottom_bar_home_button_text)) }
         )
     }
 }
@@ -40,12 +48,15 @@ fun NavigationDisplay(backStack: NavBackStack<NavKey>) {
             when (screen) {
                 Screen.Home -> NavEntry(key = screen) {
                     val viewModel: HomeViewModel = hiltViewModel()
-                    HomeScreen(viewModel = viewModel)
+                    HomeScreen(
+                        viewModel = viewModel,
+                        onNavigateToDetails = { cryptoCurrency ->
+                            backStack.add(Screen.Details(cryptoCurrency = cryptoCurrency))
+                        })
                 }
 
-                Screen.Details -> NavEntry(key = screen) {
-//                    val viewModel: PlacesViewModel = hiltViewModel()
-//                    PlacesScreen(viewModel = viewModel)
+                is Screen.Details -> NavEntry(key = screen) {
+                    DetailsScreen(cryptoCurrency = screen.cryptoCurrency)
                 }
 
                 else -> NavEntry(key = screen) {

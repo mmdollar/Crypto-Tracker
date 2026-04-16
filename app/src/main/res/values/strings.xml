@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Crypto Tracker</string>
+    <string name="error_screen">Error</string>
+
+    <string name="top_bar_back_button_text">Back</string>
+    <string name="top_bar_details_screen_text">Details for: %1$s</string>
+
+    <string name="bottom_bar_home_button_text">Home</string>
+
+    <string name="home_screen_bid_ask_text">Bid/Ask:</string>
 </resources>

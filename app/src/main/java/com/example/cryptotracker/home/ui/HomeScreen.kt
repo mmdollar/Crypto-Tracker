@@ -1,5 +1,6 @@
 package com.example.cryptotracker.home.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -13,19 +14,32 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import com.example.cryptotracker.R
 import com.example.cryptotracker.base.ui.data.UiState
 import com.example.cryptotracker.base.ui.generalerror.GeneralError
 import com.example.cryptotracker.home.data.CryptoCurrencyUi
 import com.example.cryptotracker.home.data.HomeIntent
 
 @Composable
-fun HomeScreen(viewModel: HomeViewModel) {
+fun HomeScreen(
+    viewModel: HomeViewModel,
+    onNavigateToDetails: (CryptoCurrencyUi) -> Unit
+) {
     val uiState: UiState<List<CryptoCurrencyUi>> by viewModel.uiState.collectAsState()
-    val isRefreshing by viewModel.isRefreshing.collectAsState()
+    val isRefreshing: Boolean by viewModel.isRefreshing.collectAsState()
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.selectedCryptoCurrency.collect { cryptoCurrency ->
+            onNavigateToDetails(cryptoCurrency)
+        }
+    }
 
     when (val state = uiState) {
         is UiState.Loading -> {
@@ -47,7 +61,11 @@ fun HomeScreen(viewModel: HomeViewModel) {
 }
 
 @Composable
-private fun PullToRefreshContainer(isRefreshing: Boolean, uiState: List<CryptoCurrencyUi>, onSubmitIntent: (HomeIntent) -> Unit) {
+private fun PullToRefreshContainer(
+    isRefreshing: Boolean,
+    uiState: List<CryptoCurrencyUi>,
+    onSubmitIntent: (HomeIntent) -> Unit
+) {
     val pullToRefreshState = rememberPullToRefreshState()
 
     PullToRefreshBox(
@@ -55,29 +73,43 @@ private fun PullToRefreshContainer(isRefreshing: Boolean, uiState: List<CryptoCu
         onRefresh = { onSubmitIntent(HomeIntent.Refresh) },
         state = pullToRefreshState
     ) {
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(items = uiState, key = { coin -> coin.symbol }) { coin ->
-                ListItem(
-                    headlineContent = {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(text = coin.symbol)
-                            Text(text = "${coin.priceChangePercent}%")
-                        }
-                    },
-                    supportingContent = {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(text = "Bid/Ask:")
-                            Text(text = "${coin.bidPrice}/${coin.askPrice}")
-                        }
+        CryptoCurrencyList(uiState = uiState, onSubmitIntent = onSubmitIntent)
+    }
+}
+
+@Composable
+private fun CryptoCurrencyList(
+    uiState: List<CryptoCurrencyUi>,
+    onSubmitIntent: (HomeIntent) -> Unit
+) {
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        items(
+            items = uiState,
+            key = { cryptoCurrency -> cryptoCurrency.symbol }) { cryptoCurrency ->
+            ListItem(
+                modifier = Modifier.clickable(
+                    role = Role.Button,
+                    onClick = { onSubmitIntent(HomeIntent.CryptoCurrencySelected(cryptoCurrency = cryptoCurrency)) }
+                ),
+                headlineContent = {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(text = cryptoCurrency.symbol)
+                        Text(text = "${cryptoCurrency.priceChangePercent}%")
                     }
-                )
-            }
+                },
+                supportingContent = {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(text = stringResource(id = R.string.home_screen_bid_ask_text))
+                        Text(text = "${cryptoCurrency.bidPrice}/${cryptoCurrency.askPrice}")
+                    }
+                }
+            )
         }
     }
 }
