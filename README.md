@@ -1,6 +1,6 @@
 # Crypto Tracker App
 
-A modern Android application for tracking cryptocurrencies, built with Jetpack Compose.
+A modern Android application for tracking cryptocurrencies built with Jetpack Compose.
 
 ## Running the App
 
