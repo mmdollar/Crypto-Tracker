@@ -7,7 +7,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -16,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cryptotracker.R
+import com.example.cryptotracker.base.ui.theme.CryptoTrackerTheme
 import com.example.cryptotracker.home.data.CryptoCurrencyUi
 
 @Composable
@@ -31,7 +31,7 @@ fun DetailsScreen(cryptoCurrency: CryptoCurrencyUi) {
         Column(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(vertical = 16.dp)
+                .padding(vertical = 16.dp, horizontal = 16.dp)
                 .verticalScroll(state = rememberScrollState())
         ) {
             Text(text = stringResource(id = R.string.details_screen_symbol_text))
@@ -143,10 +143,15 @@ fun DetailsScreen(cryptoCurrency: CryptoCurrencyUi) {
 @Composable
 private fun Field(label: String, text: String) {
     Text(
-        modifier = Modifier.padding(top = 16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 16.dp),
         text = label
     )
-    Text(text = text)
+    Text(
+        modifier = Modifier.fillMaxWidth(),
+        text = text
+    )
 }
 
 @Preview(
@@ -178,7 +183,7 @@ private fun DetailsScreenPreview() {
         lastId = 1L,
         count = 1
     )
-    MaterialTheme {
+    CryptoTrackerTheme {
         DetailsScreen(cryptoCurrency = cryptoCurrency)
     }
 }

@@ -3,6 +3,7 @@ package com.example.cryptotracker.home.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cryptotracker.base.ui.data.UiState
+import com.example.cryptotracker.base.utils.NetworkMonitor
 import com.example.cryptotracker.home.data.CryptoCurrencyUi
 import com.example.cryptotracker.home.data.HomeIntent
 import com.example.cryptotracker.home.repository.CryptoCurrencyRepository
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
@@ -23,7 +25,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val cryptoCurrencyRepository: CryptoCurrencyRepository
+    private val cryptoCurrencyRepository: CryptoCurrencyRepository,
+    private val networkMonitor: NetworkMonitor
 ) : ViewModel() {
 
     private val _uiState =
@@ -34,7 +37,8 @@ class HomeViewModel @Inject constructor(
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
     private val _selectedCryptoCurrency = MutableSharedFlow<CryptoCurrencyUi>()
-    val selectedCryptoCurrency: SharedFlow<CryptoCurrencyUi> = _selectedCryptoCurrency.asSharedFlow()
+    val selectedCryptoCurrency: SharedFlow<CryptoCurrencyUi> =
+        _selectedCryptoCurrency.asSharedFlow()
 
     init {
         fetchCryptoCurrencies()
@@ -60,15 +64,33 @@ class HomeViewModel @Inject constructor(
 
                 _isRefreshing.value = isRefreshing
             }
-            .onEach { currency ->
-                _uiState.value = UiState.Success(data = currency)
+            .onEach { currencies ->
+                _uiState.value = UiState.Success(data = currencies)
             }
             .catch { throwable ->
-                _uiState.value = UiState.Error(message = throwable.message.orEmpty())
+                if (handleCacheFallback()) return@catch
+
+                _uiState.value = UiState.Error(
+                    message = throwable.message.orEmpty(),
+                    throwable = throwable
+                )
             }
             .onCompletion {
                 _isRefreshing.value = false
             }
             .launchIn(viewModelScope)
+    }
+
+    private suspend fun handleCacheFallback(): Boolean {
+        if (networkMonitor.isInternetAvailable().not()) {
+            val cache = cryptoCurrencyRepository.fetchCryptoCurrenciesFromDatabase().first()
+
+            if (cache.isNotEmpty()) {
+                _uiState.value = UiState.Success(data = cache)
+                return true
+            }
+        }
+
+        return false
     }
 }
