@@ -17,10 +17,14 @@ import org.mockito.kotlin.whenever
 
 class CryptoCurrencyRepositoryTest {
 
-    private val apiService: CryptoCurrencyApiService = mock()
-    private val mapper: CryptoCurrencyMapper = mock()
-    private val dao: CryptoCurrencyDao = mock()
-    private val repository = CryptoCurrencyRepository(apiService, mapper, dao)
+    private val cryptoCurrencyApiServiceMock: CryptoCurrencyApiService = mock()
+    private val cryptoCurrencyMapperMock: CryptoCurrencyMapper = mock()
+    private val cryptoCurrencyDaoMock: CryptoCurrencyDao = mock()
+    private val cryptoCurrencyRepository = CryptoCurrencyRepository(
+        cryptoCurrencyApiService = cryptoCurrencyApiServiceMock,
+        cryptoCurrencyMapper = cryptoCurrencyMapperMock,
+        cryptoCurrencyDao = cryptoCurrencyDaoMock
+    )
 
     @Test
     fun `fetchCryptoCurrencies calls api, saves to dao, and emits ui model`() = runTest {
@@ -29,26 +33,26 @@ class CryptoCurrencyRepositoryTest {
         val mockEntity = createMockEntity("BTC")
         val mockUi = createMockUi("BTC")
 
-        whenever(apiService.fetchCryptoCurrencies()).thenReturn(listOf(mockDto))
-        whenever(mapper.mapDtoToUiModel(mockDto)).thenReturn(mockUi)
-        whenever(mapper.mapDtoToEntity(mockDto)).thenReturn(mockEntity)
+        whenever(cryptoCurrencyApiServiceMock.fetchCryptoCurrencies()).thenReturn(listOf(mockDto))
+        whenever(cryptoCurrencyMapperMock.mapDtoToUiModel(mockDto)).thenReturn(mockUi)
+        whenever(cryptoCurrencyMapperMock.mapDtoToEntity(mockDto)).thenReturn(mockEntity)
 
         // When
-        val result = repository.fetchCryptoCurrencies().first()
+        val result = cryptoCurrencyRepository.fetchCryptoCurrencies().first()
 
         // Then
-        verify(apiService).fetchCryptoCurrencies()
-        verify(dao).insertCryptoCurrencies(listOf(mockEntity))
+        verify(cryptoCurrencyApiServiceMock).fetchCryptoCurrencies()
+        verify(cryptoCurrencyDaoMock).insertCryptoCurrencies(listOf(mockEntity))
         assertEquals(listOf(mockUi), result)
     }
 
     @Test(expected = Exception::class)
     fun `fetchCryptoCurrencies propagates error when api fails`() = runTest {
         // Given
-        whenever(apiService.fetchCryptoCurrencies()).thenThrow(RuntimeException("API Error"))
+        whenever(cryptoCurrencyApiServiceMock.fetchCryptoCurrencies()).thenThrow(RuntimeException("API Error"))
 
         // When
-        repository.fetchCryptoCurrencies().first()
+        cryptoCurrencyRepository.fetchCryptoCurrencies().first()
     }
 
     @Test
@@ -57,25 +61,24 @@ class CryptoCurrencyRepositoryTest {
         val mockEntity = createMockEntity("ETH")
         val mockUi = createMockUi("ETH")
 
-        whenever(dao.getAllCryptoCurrencies()).thenReturn(flowOf(listOf(mockEntity)))
-        whenever(mapper.mapEntityToUiModel(mockEntity)).thenReturn(mockUi)
+        whenever(cryptoCurrencyDaoMock.getAllCryptoCurrencies()).thenReturn(flowOf(listOf(mockEntity)))
+        whenever(cryptoCurrencyMapperMock.mapEntityToUiModel(mockEntity)).thenReturn(mockUi)
 
         // When
-        val result = repository.fetchCryptoCurrenciesFromDatabase().first()
+        val result = cryptoCurrencyRepository.fetchCryptoCurrenciesFromDatabase().first()
 
         // Then
-        @Suppress("CheckResult")
-        verify(dao).getAllCryptoCurrencies()
+        verify(cryptoCurrencyDaoMock).getAllCryptoCurrencies()
         assertEquals(listOf(mockUi), result)
     }
 
     @Test
     fun `fetchCryptoCurrenciesFromDatabase emits empty list when dao is empty`() = runTest {
         // Given
-        whenever(dao.getAllCryptoCurrencies()).thenReturn(flowOf(emptyList()))
+        whenever(cryptoCurrencyDaoMock.getAllCryptoCurrencies()).thenReturn(flowOf(emptyList()))
 
         // When
-        val result = repository.fetchCryptoCurrenciesFromDatabase().first()
+        val result = cryptoCurrencyRepository.fetchCryptoCurrenciesFromDatabase().first()
 
         // Then
         assertEquals(emptyList<CryptoCurrencyUi>(), result)
