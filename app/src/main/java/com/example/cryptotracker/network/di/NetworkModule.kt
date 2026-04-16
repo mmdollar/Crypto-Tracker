@@ -44,7 +44,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun providePlacesApiService(
+    fun provideCryptoCurrencyApiService(
         retrofit: Retrofit
     ): CryptoCurrencyApiService =
         retrofit.create(CryptoCurrencyApiService::class.java)
